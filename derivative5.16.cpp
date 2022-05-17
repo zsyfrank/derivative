@@ -3,6 +3,27 @@
 #include<stdio.h>
 #include<math.h>
 using namespace std;
+
+double deriv_paexample(double x, double (*func)(double),double prec) {
+  /// I believe this metjor has an error of order h^2
+  /// so guess step size appropriate for error
+  double step_size = sqrt(prec);
+  double deriv1=(func(x+step_size)-func(x-step_size))/(2*step_size);
+  // now check how much it chnages if I chnage the stepsize by a factor 2
+  step_size = step_size / 2.0;
+  double deriv2=(func(x+step_size)-func(x-step_size))/(2*step_size); // coipy and pastiing here. This usually inidcates you can pull this out into a separate function.
+
+  std::cout << " the difference is "  <<  deriv2 - deriv1 << std::endl;
+  if(deriv2 - deriv1  > prec) {
+    std::cout << " Error:  the precsion we guessed is not good enough" << std::endl;  
+  }
+  return deriv2;
+
+  //can improve this by adding proper error handling and also if the precision goal is not initially satisfied add a for loop to iteratively improve like in other example you used.  Except now you compare the derivative on step N with the derivative on step N- 1
+
+}
+
+
 double myderiv(double x, double step_size, double (*func)(double),double h,double prec,double max_tries)// stepsize is divided by h every time
 {
 	cout<<fixed<<setprecision(10)<<"func("<<x<<")="<<func(x)<<std::endl;
