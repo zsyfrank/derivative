@@ -21,7 +21,13 @@ double myderiv(double x, double step_size, double (*func)(double),double h,doubl
 			flag = 0;
 		    break;
 	    }
-	    step_size=step_size/h;
+	    else if(fabs(deriv1-deriv2)>10*prec)
+		{
+			h=pow(10,max_tries);
+			step_size=step_size/h;
+		}
+		else 
+		    step_size=step_size/10;
 	}
 	return deriv1;
 }
@@ -32,10 +38,8 @@ int main()
     double result1,result2,result3,result4;
 	cout<<"please input the parameter:"<<std::endl;
     cin>>x;
-    cout<<"please input the step size:"<<std::endl;
+    cout<<"please input the initial step size:"<<std::endl;
     cin>>step_size;
-	cout<<"please input the multiple that stepsize is reduced every time:"<<std::endl;
-	cin>>h;
 	cout<<"please input the precision you need:"<<std::endl;
 	cin>>prec;
 	cout<<"please input the max tries:"<<std::endl;
