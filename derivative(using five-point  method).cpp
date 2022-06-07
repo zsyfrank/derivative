@@ -3,13 +3,19 @@
 #include<stdio.h>
 #include<math.h>
 using namespace std;
-double derivative_fivepoint(double x,double (*func)(double),double prec,bool &flag)//guess the the proper step_size for target precision
+double der_fivepoint(double x,double (*func)(double),double step_size)
+{
+	double deriv = (func(x+2*step_size)+4*func(x+step_size)-func(x-2*step_size)-4*func(x-step_size))/(12*step_size);
+	return deriv;
+}
+
+double derivative_fivepoint(double x,double (*func)(double),double prec,bool &flag,double max_tries)//guess the the proper step_size for target precision
 {
 	flag = 1;
-	double step_size = pow(prec,4);//estimate the step_size basing on precision
-	double deriv1 = (func(x+2*step_size)+4*func(x+step_size)-func(x-2*step_size)-4*func(x-step_size))/(12*step_size);
+	double step_size = pow(prec,0.25);//estimate the step_size basing on precision
+	double deriv1 = der_fivepoint(x,func,step_size);
 	step_size = step_size/2;
-	double deriv2 = (func(x+2*step_size)+4*func(x+step_size)-func(x-2*step_size)-4*func(x-step_size))/(12*step_size);
+	double deriv2 = der_fivepoint(x,func,step_size);
 	double error = fabs(deriv1-deriv2);
 	if(error <= prec)
 	{
@@ -21,11 +27,11 @@ double derivative_fivepoint(double x,double (*func)(double),double prec,bool &fl
 	{
 		cout<<"it's a guess is not good enough ,and the present derivative on STEP1 is"<<deriv2<<std::endl;
 		int i = 0;
-		while(error > prec)
+		while((error > prec)&&(i<max_tries))
 		{
 			step_size = step_size/2;
-			error = fabs(deriv2 - (func(x+2*step_size)+4*func(x+step_size)-func(x-2*step_size)-4*func(x-step_size))/(12*step_size));
-			deriv2 = (func(x+2*step_size)+4*func(x+step_size)-func(x-2*step_size)-4*func(x-step_size))/(12*step_size);
+			error = fabs(deriv2 - der_fivepoint(x,func,step_size));
+			deriv2 = der_fivepoint(x,func,step_size);
 			i++;
 		}
 		cout<<"it's on STEP"<<i<<" that the target precision is reached"<<",and the derivative is"<<deriv2<<std::endl;
@@ -73,7 +79,7 @@ int main()
 	cin>>max_tries;
 //sinx
 	cout<<"for sinx"<<endl;
-    result1 = derivative_fivepoint(x,&sin,prec,flag);
+    result1 = derivative_fivepoint(x,&sin,prec,flag,max_tries);
 	if(flag)// geting derivative through comparing the two methods in case the guess failed
 	{	
 		result1=myderiv(x,step_size,&sin,h,prec,max_tries,flag);
@@ -81,7 +87,7 @@ int main()
 	cout<<fixed<<setprecision(10)<<"sinx'="<<result1<<std::endl;
 //cosx
 	cout<<"for cosx"<<endl;
-	result2 = derivative_fivepoint(x,&cos,prec,flag);
+	result2 = derivative_fivepoint(x,&cos,prec,flag,max_tries);
 	if(flag)// geting derivative through comparing the two methods in case the guess failed
 	{
 		result2=myderiv(x,step_size,&cos,h,prec,max_tries,flag);
@@ -89,7 +95,7 @@ int main()
 	cout<<fixed<<setprecision(10)<<"cosx'="<<result2<<std::endl;
 //e^x
 	cout<<"for e^x"<<endl;
-	result3=derivative_fivepoint(x,&exp,prec,flag);
+	result3=derivative_fivepoint(x,&exp,prec,flag,max_tries);
 	if(flag)// geting derivative through comparing the two methods in case the guess failed
 	{
 		result3=myderiv(x,step_size,&exp,h,prec,max_tries,flag); 
@@ -97,7 +103,7 @@ int main()
 	cout<<fixed<<setprecision(10)<<"e^x'="<<result3<<std::endl;
 //lnx
 	cout<<"for lnx"<<endl;
-	result4=derivative_fivepoint(x,&log,prec,flag);
+	result4=derivative_fivepoint(x,&log,prec,flag,max_tries);
 	if(flag)// geting derivative through comparing the two methods in case the guess failed
 	{
 		result4=myderiv(x,step_size,&log,h,prec,max_tries,flag);  
