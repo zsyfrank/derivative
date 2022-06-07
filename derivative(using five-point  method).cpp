@@ -25,7 +25,7 @@ double derivative_fivepoint(double x,double (*func)(double),double prec,bool &fl
 	}
 	else
 	{
-		cout<<"it's a guess is not good enough ,and the present derivative on STEP1 is"<<deriv2<<std::endl;
+		cout<<"it's a guess is not good enough ,and the present derivative on STEP0 is"<<deriv2<<std::endl;
 		int i = 0;
 		while((error > prec)&&(i<max_tries))
 		{
@@ -34,7 +34,14 @@ double derivative_fivepoint(double x,double (*func)(double),double prec,bool &fl
 			deriv2 = der_fivepoint(x,func,step_size);
 			i++;
 		}
-		cout<<"it's on STEP"<<i<<" that the target precision is reached"<<",and the derivative is"<<deriv2<<std::endl;
+		if(i==max_tries)
+		{
+			cout<<"warning: maxtries exceeded, the present derivative is "<<deriv2<<", and the error is "<<deriv2-cos(x)<<endl; 
+		}
+		else
+		{
+			cout<<"it's on STEP"<<i+1<<" that the target precision is reached"<<",and the derivative is"<<deriv2<<std::endl;
+		}
 	}
 	return deriv2;
 }
@@ -71,6 +78,8 @@ int main()
     cin>>x;
 	cout<<"please input the precision you need:"<<std::endl;
 	cin>>prec;
+	cout<<"please input the max tries:"<<std::endl;
+	cin>>max_tries;
 	cout<<"please input the step size:"<<std::endl;
 	cin>>step_size;
 	cout<<"please input the multiple that stepsize is reduced every time:"<<std::endl;
